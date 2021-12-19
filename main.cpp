@@ -121,12 +121,12 @@ bool setBitmapFromClipboard(HANDLE &data)
     return false;
   OpenClipboard(NULL);
   GlobalLock(data);
-  data = GetClipboardData(CF_BITMAP);
+  data = move(GetClipboardData(CF_BITMAP));
   CloseClipboard();
   return true;
 }
 
-string checkValidPath(string path)
+string checkValidPath(string &path)
 {
   if (is_directory(path))
   {
@@ -172,7 +172,6 @@ void writeBitmapToFile(string path, HBITMAP &bitmapImage)
 
 int main(int argc, char *argv[])
 {
-
   HGLOBAL data;
   bool isAvailable = setBitmapFromClipboard(data);
   if (!isAvailable)
@@ -192,7 +191,7 @@ int main(int argc, char *argv[])
   {
     argFilename = argv[1];
   }
-  argFilename = checkValidPath(argFilename);
+  argFilename = move(checkValidPath(argFilename));
   writeBitmapToFile(argFilename, bitmapImage);
   GlobalUnlock(data);
   return 0;
